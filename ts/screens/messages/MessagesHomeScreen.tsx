@@ -10,6 +10,8 @@ import {
   NavigationScreenProps
 } from "react-navigation";
 import { connect } from "react-redux";
+import { Millisecond } from "italia-ts-commons/lib/units";
+import { IOStyles } from "../../components/core/variables/IOStyles";
 import MessagesArchive from "../../components/messages/MessagesArchive";
 import MessagesDeadlines from "../../components/messages/MessagesDeadlines";
 import MessagesInbox from "../../components/messages/MessagesInbox";
@@ -19,12 +21,13 @@ import { ScreenContentHeader } from "../../components/screens/ScreenContentHeade
 import TopScreenComponent from "../../components/screens/TopScreenComponent";
 import { MIN_CHARACTER_SEARCH_TEXT } from "../../components/search/SearchButton";
 import { SearchNoResultMessage } from "../../components/search/SearchNoResultMessage";
+import SectionStatusComponent from "../../components/SectionStatusComponent";
 import I18n from "../../i18n";
 import {
   loadMessages,
   setMessagesArchivedState
 } from "../../store/actions/messages";
-import { navigateToMessageDetailScreenAction } from "../../store/actions/navigation";
+import { navigateToMessageRouterScreen } from "../../store/actions/navigation";
 import { loadServiceDetail } from "../../store/actions/services";
 import { Dispatch } from "../../store/actions/types";
 import { lexicallyOrderedMessagesStateSelector } from "../../store/reducers/entities/messages";
@@ -42,8 +45,8 @@ import { makeFontStyleObject } from "../../theme/fonts";
 import customVariables from "../../theme/variables";
 import { HEADER_HEIGHT, MESSAGE_ICON_HEIGHT } from "../../utils/constants";
 import { setStatusBarColorAndBackground } from "../../utils/statusBar";
-import SectionStatusComponent from "../../components/SectionStatusComponent";
-import { IOStyles } from "../../components/core/variables/IOStyles";
+import { sectionStatusSelector } from "../../store/reducers/backendStatus";
+import { setAccessibilityFocus } from "../../utils/accessibility";
 
 type Props = NavigationScreenProps &
   ReturnType<typeof mapStateToProps> &
@@ -148,6 +151,10 @@ class MessagesHomeScreen extends React.PureComponent<Props, State> {
 
     return (
       <TopScreenComponent
+        accessibilityEvents={{
+          disableAccessibilityFocus:
+            this.props.messageSectionStatusActive !== undefined
+        }}
         accessibilityLabel={I18n.t("messages.contentTitle")}
         contextualHelpMarkdown={contextualHelpMarkdown}
         faqCategories={["messages"]}
@@ -155,6 +162,12 @@ class MessagesHomeScreen extends React.PureComponent<Props, State> {
         isSearchAvailable={{ enabled: true, searchType: "Messages" }}
         appLogo={true}
       >
+        <SectionStatusComponent
+          sectionKey={"messages"}
+          onSectionRef={v => {
+            setAccessibilityFocus(v, 100 as Millisecond);
+          }}
+        />
         {!isSearchEnabled && (
           <React.Fragment>
             <AnimatedScreenContentHeader
@@ -276,7 +289,6 @@ class MessagesHomeScreen extends React.PureComponent<Props, State> {
             />
           </Tab>
         </AnimatedTabs>
-        <SectionStatusComponent sectionKey={"messages"} />
       </View>
     );
   };
@@ -316,6 +328,7 @@ const mapStateToProps = (state: GlobalState) => ({
   servicesById: servicesByIdSelector(state),
   paymentsByRptId: paymentsByRptIdSelector(state),
   searchText: searchTextSelector(state),
+  messageSectionStatusActive: sectionStatusSelector("messages")(state),
   isSearchEnabled: isSearchMessagesEnabledSelector(state)
 });
 
@@ -340,7 +353,7 @@ const mapDispatchToProps = (dispatch: Dispatch) => ({
     dispatch(loadServiceDetail.request(serviceId));
   },
   navigateToMessageDetail: (messageId: string) =>
-    dispatch(navigateToMessageDetailScreenAction({ messageId })),
+    dispatch(navigateToMessageRouterScreen({ messageId })),
   updateMessagesArchivedState: (
     ids: ReadonlyArray<string>,
     archived: boolean

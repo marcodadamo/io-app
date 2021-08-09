@@ -57,11 +57,6 @@ const styles = StyleSheet.create({
   icon: {
     marginTop: Platform.OS === "android" ? 4 : 6 // adjust icon position to align it with baseline of email text}
   },
-  emailInput: {
-    fontWeight: customVariables.h1FontWeight,
-    color: customVariables.h1Color,
-    fontSize: 18
-  },
   darkestGray: {
     color: customVariables.brandDarkestGray
   }
@@ -185,7 +180,10 @@ class EmailInsertScreen extends React.PureComponent<Props, State> {
   }
 
   public componentDidUpdate(prevProps: Props) {
-    if (!this.state.isMounted) {
+    const isPrevCurrentSameState =
+      prevProps.profile.kind === this.props.profile.kind;
+    // do nothing if prev profile is in the same state of the current
+    if (!this.state.isMounted || isPrevCurrentSameState) {
       return;
     }
     // if we were updating the profile
@@ -247,7 +245,7 @@ class EmailInsertScreen extends React.PureComponent<Props, State> {
         goBack={this.handleGoBack}
         headerTitle={
           isFromProfileSection
-            ? I18n.t("profile.preferences.list.email")
+            ? I18n.t("profile.data.list.email")
             : I18n.t("email.insert.header")
         }
         contextualHelpMarkdown={contextualHelpMarkdown}
@@ -292,8 +290,7 @@ class EmailInsertScreen extends React.PureComponent<Props, State> {
                     autoCapitalize: "none",
                     keyboardType: "email-address",
                     value: this.state.email.getOrElse(EMPTY_EMAIL),
-                    onChangeText: this.handleOnChangeEmailText,
-                    style: styles.emailInput
+                    onChangeText: this.handleOnChangeEmailText
                   }}
                   iconStyle={styles.icon}
                 />
