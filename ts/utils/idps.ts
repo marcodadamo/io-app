@@ -16,12 +16,15 @@ export const testIdp: LocalIdpsFallback = {
 };
 
 export const idps: ReadonlyArray<LocalIdpsFallback> = [
+  // TODO: likely add a new item instead of reusing the poor Aruba :-)
   {
-    id: "arubaid",
-    name: "Aruba",
+    // the ID must be this one
+    id: "xx_testenv2",
+    name: "Testenv 2",
     localLogo: require("../../img/spid-idp-arubaid.png"),
     logo: "",
-    profileUrl: "https://selfcarespid.aruba.it"
+    // please replace with your testenv2 local proxy port
+    profileUrl: "http://127.0.0.1:9978/login"
   },
   {
     id: "infocertid",

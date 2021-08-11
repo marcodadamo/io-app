@@ -119,6 +119,17 @@ class IdpLoginScreen extends React.Component<Props, State> {
     this.state = {
       requestState: pot.noneLoading
     };
+
+    // TODO: this is where you can place the token extracted manually from the spid-testenv2
+    // The timeout is arbitrary for demonstration purposes.
+    // This code won't be needed once we make testenv2 work with http locally
+    /*
+    setTimeout(() => {
+      this.handleLoginSuccess(
+        "https://pagopa.atlassian.net/wiki/spaces/IC/pages/149094790/Test+e+debug+in+locale+con+io-mock#Recupero-token-spid-testenv2"
+      );
+    }, 2000);
+    */
   }
 
   private updateLoginTrace = (url: string): void => {
