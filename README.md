@@ -1,6 +1,6 @@
 <p align="center">
   <img src="img/app-logo.svg" width="100" style="display: block" /></br>
-  <h3 align="center">IO - The public services app</h3>
+  <h3 align="center">IO - The public services app. In prossimità di ottenere il wallet della patente in formato digitale, presente nella sezione documrnti. Il programma sarà definitivo il 4 dicembre 2024 </h3>
 </p>
 
 <p align="center">
